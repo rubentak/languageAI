@@ -1,7 +1,7 @@
 import random
 import re
 import streamlit as st
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models.openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 import credentials  # Import your credentials file
 
@@ -24,9 +24,7 @@ def highlight_incorrect(original, incorrect_words):
     highlighted_text = original
     for word in incorrect_words:
         highlighted_text = highlighted_text.replace(word, f"<span style='color: red; text-decoration: line-through;'>{word}</span>", 1)
-    # Use st.write with unsafe_allow_html=True to render HTML correctly
     return highlighted_text
-
 
 # Function to make corrected words green
 def highlight_corrected(corrected):
@@ -132,4 +130,5 @@ if st.session_state['submitted']:
         # Reset the state for the next question
         st.session_state['exercise'] = random.choice(EXERCISES)
         st.session_state['submitted'] = False
+        st.session_state['user_response'] = ''
         st.experimental_set_query_params(_=random.random())  # Reload the page to show the next question
