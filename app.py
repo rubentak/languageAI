@@ -110,11 +110,11 @@ if not st.session_state['submitted']:
 
                     # Use Markdown for displaying highlighted corrections with HTML enabled
                     st.markdown("### Feedback")
-                    st.write("**Your Answer (with corrections):**", unsafe_allow_html=True)
-                    st.write(highlighted_original, unsafe_allow_html=True)
-                    st.write("**Corrected Version:**", unsafe_allow_html=True)
-                    st.write(highlighted_corrected, unsafe_allow_html=True)
-                    st.write(f"**Feedback:** {feedback}", unsafe_allow_html=True)
+                    st.markdown("**Your Answer (with corrections):**", unsafe_allow_html=True)
+                    st.markdown(highlighted_original, unsafe_allow_html=True)
+                    st.markdown("**Corrected Version:**", unsafe_allow_html=True)
+                    st.markdown(highlighted_corrected, unsafe_allow_html=True)
+                    st.markdown(f"**Feedback:** {feedback}", unsafe_allow_html=True)
 
                     # Mark as submitted so that the "Next Question" button appears
                     st.session_state['submitted'] = True
