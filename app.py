@@ -1,12 +1,11 @@
 import random
 import re
 import streamlit as st
-from langchain.chat_models.openai import ChatOpenAI
+from langchain_community.chat_models.openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
-import credentials  # Import your credentials file
 
 # Constants
-OPENAI_API_KEY = credentials.OPENAI_API_KEY
+OPENAI_API_KEY = st.secrets['OPENAI_API_KEY']
 MODEL = "gpt-4o"
 EXERCISES = [
     "Walk me through what a typical weekend looks like for you.",
