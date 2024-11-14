@@ -23,6 +23,7 @@ def highlight_incorrect(original, incorrect_words):
     highlighted_text = original
     for word in incorrect_words:
         highlighted_text = highlighted_text.replace(word, f"<span style='color: red; text-decoration: line-through;'>{word}</span>", 1)
+    # Use st.write with unsafe_allow_html=True to render HTML correctly
     return highlighted_text
 
 # Function to make corrected words green
