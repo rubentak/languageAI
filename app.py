@@ -5,6 +5,8 @@ from langchain_community.chat_models.openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 
 # Constants
+import streamlit as st
+
 OPENAI_API_KEY = st.secrets['OPENAI_API_KEY']
 MODEL = "gpt-4o"
 EXERCISES = [
@@ -22,8 +24,7 @@ st.set_page_config(page_title="Language Learning App", page_icon=":books:")
 def highlight_incorrect(original, incorrect_words):
     highlighted_text = original
     for word in incorrect_words:
-        highlighted_text = highlighted_text.replace(word, f"<span style='color: red; text-decoration: line-through;'>{word}</span>", 1)
-    # Use st.write with unsafe_allow_html=True to render HTML correctly
+        highlighted_text = re.sub(rf'\b{re.escape(word)}\b', f'<span style="color: red; text-decoration: line-through;">{word}</span>', highlighted_text)
     return highlighted_text
 
 # Function to make corrected words green
@@ -108,19 +109,21 @@ if not st.session_state['submitted']:
                     # Highlight corrections in the corrected answer
                     highlighted_corrected = highlight_corrected(corrected_answer)
 
-
-                    # Function to safely render HTML tags in Streamlit
-                    def safe_markdown(text):
-                        return st.markdown(text, unsafe_allow_html=True)
-
-
-                    # Use Markdown for displaying highlighted corrections with HTML enabled
+                    # Corrected version for displaying highlighted text consistently
                     st.markdown("### Feedback")
-                    safe_markdown("**Your Answer (with corrections):**")
-                    safe_markdown(highlighted_original)
-                    safe_markdown("**Corrected Version:**")
-                    safe_markdown(highlighted_corrected)
-                    safe_markdown(f"**Feedback:** {feedback}")
+
+                    # Highlight User Answer (with corrections)
+                    st.markdown("**Your Answer (with corrections):**", unsafe_allow_html=True)
+                    st.markdown(f"<div>{highlighted_original}</div>",
+                                unsafe_allow_html=True)  # Wrap it in a div for safe HTML handling
+
+                    # Highlight Corrected Answer
+                    st.markdown("**Corrected Version:**", unsafe_allow_html=True)
+                    st.markdown(f"<div>{highlighted_corrected}</div>",
+                                unsafe_allow_html=True)  # Corrected parts in green and bold
+
+                    # Display Feedback
+                    st.markdown(f"**Feedback:** {feedback}", unsafe_allow_html=True)
 
                     # Mark as submitted so that the "Next Question" button appears
                     st.session_state['submitted'] = True
@@ -136,5 +139,4 @@ if st.session_state['submitted']:
         # Reset the state for the next question
         st.session_state['exercise'] = random.choice(EXERCISES)
         st.session_state['submitted'] = False
-        st.session_state['user_response'] = ''
         st.experimental_set_query_params(_=random.random())  # Reload the page to show the next question
