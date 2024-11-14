@@ -132,4 +132,4 @@ if st.session_state['submitted']:
         # Reset the state for the next question
         st.session_state['exercise'] = random.choice(EXERCISES)
         st.session_state['submitted'] = False
-                st.experimental_set_query_params(_=random.random())  # Reload the page to show the next question
+        st.experimental_set_query_params(_=random.random())  # Reload the page to show the next question
