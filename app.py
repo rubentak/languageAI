@@ -108,13 +108,19 @@ if not st.session_state['submitted']:
                     # Highlight corrections in the corrected answer
                     highlighted_corrected = highlight_corrected(corrected_answer)
 
+
+                    # Function to safely render HTML tags in Streamlit
+                    def safe_markdown(text):
+                        return st.markdown(text, unsafe_allow_html=True)
+
+
                     # Use Markdown for displaying highlighted corrections with HTML enabled
                     st.markdown("### Feedback")
-                    st.markdown("**Your Answer (with corrections):**", unsafe_allow_html=True)
-                    st.markdown(highlighted_original, unsafe_allow_html=True)
-                    st.markdown("**Corrected Version:**", unsafe_allow_html=True)
-                    st.markdown(highlighted_corrected, unsafe_allow_html=True)
-                    st.markdown(f"**Feedback:** {feedback}", unsafe_allow_html=True)
+                    safe_markdown("**Your Answer (with corrections):**")
+                    safe_markdown(highlighted_original)
+                    safe_markdown("**Corrected Version:**")
+                    safe_markdown(highlighted_corrected)
+                    safe_markdown(f"**Feedback:** {feedback}")
 
                     # Mark as submitted so that the "Next Question" button appears
                     st.session_state['submitted'] = True
