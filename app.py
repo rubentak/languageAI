@@ -1,7 +1,7 @@
 import random
 import re
 import streamlit as st
-from langchain_community.chat_models import ChatOpenAI
+from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 import credentials  # Import your credentials file
 
@@ -58,35 +58,31 @@ def initialize_qa_chain():
         Corrected Answer:
         Feedback:"""
     )
-
     return prompt | llm
 
-# Initialize session state for chain
+# Initialize session state variables
 if 'chain' not in st.session_state:
     st.session_state['chain'] = initialize_qa_chain()
+if 'exercise' not in st.session_state:
+    st.session_state['exercise'] = random.choice(EXERCISES)
+if 'submitted' not in st.session_state:
+    st.session_state['submitted'] = False
 
 # Main UI
 st.title("Language Learning App")
 st.markdown("### Practice and improve your language skills with personalized feedback.")
 
-# Start exercise button
-if st.button("Start Exercise"):
-    st.session_state['exercise'] = random.choice(EXERCISES)
-    st.session_state['user_answer'] = None  # Reset the answer field for new exercise
-
 # Show the exercise if one is set
-if 'exercise' in st.session_state:
-    st.write("#### Your Exercise:")
-    st.write(st.session_state['exercise'])
+st.write("#### Your Exercise:")
+st.write(st.session_state['exercise'])
 
-    # Text area for user's response
-    st.session_state['user_answer'] = st.text_area("Your response:", key='user_response', height=100)
+# Text area for user's response
+user_answer = st.text_area("Your response:", key='user_response', height=100, disabled=st.session_state['submitted'], value='' if st.session_state['submitted'] else st.session_state.get('user_response', ''))
 
-    # Button to submit the answer for feedback
+# Conditional display of buttons based on whether the answer is submitted or not
+if not st.session_state['submitted']:
+    # Show "Submit Answer" button
     if st.button("Submit Answer"):
-        # Capture the user's answer
-        user_answer = st.session_state['user_answer']
-
         # Run the chain to get corrected answer and feedback
         with st.spinner("Analyzing your answer..."):
             try:
@@ -115,7 +111,6 @@ if 'exercise' in st.session_state:
                     highlighted_corrected = highlight_corrected(corrected_answer)
 
                     # Use Markdown for displaying highlighted corrections with HTML enabled
-                    # Display feedback with HTML enabled for styling
                     st.markdown("### Feedback")
                     st.write("**Your Answer (with corrections):**", unsafe_allow_html=True)
                     st.write(highlighted_original, unsafe_allow_html=True)
@@ -123,7 +118,18 @@ if 'exercise' in st.session_state:
                     st.write(highlighted_corrected, unsafe_allow_html=True)
                     st.write(f"**Feedback:** {feedback}", unsafe_allow_html=True)
 
+                    # Mark as submitted so that the "Next Question" button appears
+                    st.session_state['submitted'] = True
+
                 except Exception as parse_error:
                     st.error(f"Error parsing the response: {parse_error}")
             except Exception as e:
                 st.error(f"Error generating feedback: {e}")
+
+if st.session_state['submitted']:
+    # Show "Next Question" button at the bottom after the answer is submitted
+    if st.button("Next Question"):
+        # Reset the state for the next question
+        st.session_state['exercise'] = random.choice(EXERCISES)
+        st.session_state['submitted'] = False
+                st.experimental_set_query_params(_=random.random())  # Reload the page to show the next question
