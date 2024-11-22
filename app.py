@@ -6,7 +6,7 @@ from langchain_community.chat_models.openai import ChatOpenAI
 from langchain.prompts import PromptTemplate
 
 # Constants
-os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
+OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 MODEL = "gpt-4o"
 EXERCISES = [
     "Walk me through what a typical weekend looks like for you.",
