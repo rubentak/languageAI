@@ -63,7 +63,7 @@ st.markdown(
             color: green;
             font-weight: bold;
         }
-        .next-button {
+        .stButton>button {
             background-color: #e61b23;
             color: white;
             border: none;
@@ -72,7 +72,7 @@ st.markdown(
             cursor: pointer;
             border-radius: 5px;
         }
-        .next-button:hover {
+        .stButton>button:hover {
             background-color: #c1161d;
         }
     </style>
@@ -219,7 +219,7 @@ if not st.session_state['submitted']:
 
 if st.session_state['submitted']:
     # Show "Next Question" button at the bottom after the answer is submitted
-    if st.button("Next Question", key='next_button', css_class='next-button'):
+    if st.button("Next Question", key='next_button'):
         # Reset the state for the next question
         st.session_state['exercise'] = random.choice(EXERCISES)
         st.session_state['submitted'] = False
