@@ -17,18 +17,98 @@ EXERCISES = [
 ]
 
 # Streamlit page config
-st.set_page_config(page_title="Language Learning App", page_icon=":books:")
+st.set_page_config(page_title="Language Learning App", page_icon="images/wallstreatlogo1.jpeg", layout="wide")
+
+# Custom CSS for Wall Street English branding
+st.markdown(
+    """
+    <style>
+        .main {
+            background-color: #f5f7fa;
+        }
+        .title-container {
+            background-color: #001f4d;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+        .content-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .interaction-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .wallstreet-logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+        .feedback-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .feedback-header {
+            color: #001f4d;
+        }
+        .highlight-incorrect {
+            color: red;
+            text-decoration: line-through;
+        }
+        .highlight-corrected {
+            color: green;
+            font-weight: bold;
+        }
+        .next-button {
+            background-color: #e61b23;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .next-button:hover {
+            background-color: #c1161d;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Header with branding
+st.markdown(
+    """
+    <div class="title-container">
+    """,
+    unsafe_allow_html=True
+)
+st.image("images/wallstreatlogo1.jpeg", width=150)
+st.markdown(
+    """
+        <h1>Wall Street English - Language Learning App</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# Main Content Container
+st.markdown("<div class='content-container'>", unsafe_allow_html=True)
 
 # Function to highlight marked incorrect words with red strikethrough
 def highlight_incorrect(original, incorrect_words):
     highlighted_text = original
     for word in incorrect_words:
-        highlighted_text = re.sub(rf'\b{re.escape(word)}\b', f'<span style="color: red; text-decoration: line-through;">{word}</span>', highlighted_text)
+        highlighted_text = re.sub(rf'\b{re.escape(word)}\b', f'<span class="highlight-incorrect">{word}</span>', highlighted_text)
     return highlighted_text
 
 # Function to make corrected words green
 def highlight_corrected(corrected):
-    highlighted_corrected = re.sub(r"\{(.*?)\}", r"<span style='color: green; font-weight: bold;'>\1</span>", corrected)
+    highlighted_corrected = re.sub(r"\{(.*?)\}", r"<span class='highlight-corrected'>\1</span>", corrected)
     return highlighted_corrected
 
 # Initialize chain only once
@@ -65,17 +145,22 @@ if 'exercise' not in st.session_state:
     st.session_state['exercise'] = random.choice(EXERCISES)
 if 'submitted' not in st.session_state:
     st.session_state['submitted'] = False
+if 'user_response' not in st.session_state:
+    st.session_state['user_response'] = ''
 
 # Main UI
-st.title("Language Learning App")
 st.markdown("### Practice and improve your language skills with personalized feedback.")
+
+# Interaction Container
+st.markdown("<div class='interaction-container'>", unsafe_allow_html=True)
 
 # Show the exercise if one is set
 st.write("#### Your Exercise:")
 st.write(st.session_state['exercise'])
 
 # Text area for user's response
-user_answer = st.text_area("Your response:", key='user_response', height=100, disabled=st.session_state['submitted'], value='' if st.session_state['submitted'] else st.session_state.get('user_response', ''))
+if not st.session_state['submitted']:
+    user_answer = st.text_area("Your response:", key='user_response', height=100)
 
 # Conditional display of buttons based on whether the answer is submitted or not
 if not st.session_state['submitted']:
@@ -85,7 +170,7 @@ if not st.session_state['submitted']:
         with st.spinner("Analyzing your answer..."):
             try:
                 # Call the agent with the user’s answer
-                response = st.session_state['chain'].invoke({"user_answer": user_answer})
+                response = st.session_state['chain'].invoke({"user_answer": st.session_state['user_response']})
 
                 # Extract and process the response, with error handling
                 try:
@@ -103,7 +188,7 @@ if not st.session_state['submitted']:
 
                     # Extract and format the marked incorrect words
                     incorrect_words = re.findall(r"\{(.*?)\}", marked_incorrect)
-                    highlighted_original = highlight_incorrect(user_answer, incorrect_words)
+                    highlighted_original = highlight_incorrect(st.session_state['user_response'], incorrect_words)
 
                     # Highlight corrections in the corrected answer
                     highlighted_corrected = highlight_corrected(corrected_answer)
@@ -113,12 +198,12 @@ if not st.session_state['submitted']:
 
                     # Highlight User Answer (with corrections)
                     st.markdown("**Your Answer (with corrections):**", unsafe_allow_html=True)
-                    st.markdown(f"<div>{highlighted_original}</div>",
+                    st.markdown(f"<div class='feedback-container'>{highlighted_original}</div>",
                                 unsafe_allow_html=True)  # Wrap it in a div for safe HTML handling
 
                     # Highlight Corrected Answer
                     st.markdown("**Corrected Version:**", unsafe_allow_html=True)
-                    st.markdown(f"<div>{highlighted_corrected}</div>",
+                    st.markdown(f"<div class='feedback-container'>{highlighted_corrected}</div>",
                                 unsafe_allow_html=True)  # Corrected parts in green and bold
 
                     # Display Feedback
@@ -134,8 +219,14 @@ if not st.session_state['submitted']:
 
 if st.session_state['submitted']:
     # Show "Next Question" button at the bottom after the answer is submitted
-    if st.button("Next Question"):
+    if st.button("Next Question", key='next_button', css_class='next-button'):
         # Reset the state for the next question
         st.session_state['exercise'] = random.choice(EXERCISES)
         st.session_state['submitted'] = False
-        st.experimental_set_query_params(_=random.random())  # Reload the page to show the next question
+        st.session_state['user_response'] = ''
+
+# Close Interaction Container
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Close Main Content Container
+st.markdown("</div>", unsafe_allow_html=True)
