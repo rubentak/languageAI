@@ -17,7 +17,7 @@ EXERCISES = [
 ]
 
 # Streamlit page config
-st.set_page_config(page_title="Language Learning App", page_icon="images/wallstreatlogo1.jpeg", layout="wide")
+st.set_page_config(page_title="Language Learning App", page_icon="images/wallstreatlogo3.png", layout="centered")
 
 # Custom CSS for Wall Street English branding
 st.markdown(
@@ -27,9 +27,9 @@ st.markdown(
             background-color: #f5f7fa;
         }
         .title-container {
-            background-color: #001f4d;
+            background-color: #003359;
             padding: 20px;
-            color: white;
+            2D3748;
             text-align: center;
         }
         .content-container {
@@ -53,7 +53,7 @@ st.markdown(
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
         }
         .feedback-header {
-            color: #001f4d;
+            2D3748;
         }
         .highlight-incorrect {
             color: red;
@@ -64,7 +64,7 @@ st.markdown(
             font-weight: bold;
         }
         .stButton>button {
-            background-color: #e61b23;
+            background-color: #003359;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -87,7 +87,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.image("images/wallstreatlogo1.jpeg", width=150)
+st.image("images/wallstreatlogo3.png", width=150)
 st.markdown(
     """
         <h1>Wall Street English - Language Learning App</h1>
