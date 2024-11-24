@@ -24,13 +24,7 @@ st.markdown(
     """
     <style>
         .main {
-            background-color: #f5f7fa;
-        }
-        .title-container {
-            background-color: #003359;
-            padding: 20px;
-            2D3748;
-            text-align: center;
+            background-color: #EDF2F7;
         }
         .content-container {
             max-width: 800px;
@@ -81,12 +75,6 @@ st.markdown(
 )
 
 # Header with branding
-st.markdown(
-    """
-    <div class="title-container">
-    """,
-    unsafe_allow_html=True
-)
 st.image("images/wallstreatlogo3.png", width=150)
 st.markdown(
     """
